@@ -1,6 +1,5 @@
-import React from 'react';
 
-const Loader = ({ size = 'md' }) => {
+const Loader = () => {
   return (
     <div className="loader flex flex-col items-center justify-center py-6">
       <div className="cloud-row relative w-48 h-20 mb-4" aria-hidden>

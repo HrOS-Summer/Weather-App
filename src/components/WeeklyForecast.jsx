@@ -13,7 +13,7 @@ const WeeklyForecast = ({ weather }) => {
 
       {/* Small screens: horizontal scroll */}
       <div className="lg:hidden -mx-4 px-4">
-        <div className="overflow-x-auto thin-scrollbar">
+        <div className="overflow-x-auto thin-scrollbar mt-4">
           <div className="flex gap-4">
             {daily.time.map((date, index) => (
               <div

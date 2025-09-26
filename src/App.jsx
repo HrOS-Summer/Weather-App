@@ -77,10 +77,36 @@ const App = () => {
     // Don't try if a location is already set (e.g., from a search)
     if (location) return;
 
+    // Helper: IP fallback using ipwho.is (no API key, approximate)
+    const fetchIpLocation = async () => {
+      try {
+        const res = await fetch('https://ipwho.is/');
+        const data = await res.json();
+        if (data && data.success !== false && data.latitude && data.longitude) {
+          return {
+            latitude: data.latitude,
+            longitude: data.longitude,
+            name: data.city || data.region || data.country || null,
+            country_code: data.country_code || null,
+          };
+        }
+      } catch (e) {
+        // ignore
+      }
+      return null;
+    };
+
     if (!navigator?.geolocation) {
-      // Geolocation API not available
-      setError('Geolocation is not supported by your browser.');
-      setIsLoading(false);
+      // Geolocation API not available — try IP fallback
+      fetchIpLocation().then((ipLoc) => {
+        if (ipLoc) {
+          setLocation(ipLoc);
+          setError(null);
+        } else {
+          setError('Geolocation is not supported by your browser.');
+        }
+        setIsLoading(false);
+      });
       return;
     }
 
@@ -105,20 +131,50 @@ const App = () => {
         });
     };
 
-    const failure = (err) => {
-      // If user denies permission, we don't want to spam them with errors.
-      if (err.code === 1) {
-        setError('Location permission denied. Search for a city to get weather.');
-        setIsLoading(false);
+    const failure = async (err) => {
+      // If user denies permission or other error, try IP fallback instead of failing completely
+      const ipLoc = await fetchIpLocation();
+      if (ipLoc) {
+        setLocation(ipLoc);
+        setError(null);
       } else {
-        setError('Unable to retrieve your location.');
-        setIsLoading(false);
+        if (err && err.code === 1) {
+          setError('Location permission denied. Search for a city to get weather.');
+        } else {
+          setError('Unable to retrieve your location.');
+        }
       }
+      setIsLoading(false);
     };
 
-    // Attempt to get a reasonably accurate location (may prompt user)
-    // Use reduced accuracy/timeout to get a faster initial position (acceptable for weather)
-    navigator.geolocation.getCurrentPosition(success, failure, { enableHighAccuracy: false, timeout: 5000, maximumAge: 60000 });
+    // If the Permissions API indicates denied, skip prompting and use IP fallback
+    if (navigator.permissions && navigator.permissions.query) {
+      try {
+        navigator.permissions.query({ name: 'geolocation' }).then((perm) => {
+          if (perm.state === 'denied') {
+            fetchIpLocation().then((ipLoc) => {
+              if (ipLoc) {
+                setLocation(ipLoc);
+                setError(null);
+              } else {
+                setError('Location permission denied. Search for a city to get weather.');
+              }
+              setIsLoading(false);
+            });
+          } else {
+            // prompt or granted
+            navigator.geolocation.getCurrentPosition(success, failure, { enableHighAccuracy: false, timeout: 5000, maximumAge: 60000 });
+          }
+        }).catch(() => {
+          navigator.geolocation.getCurrentPosition(success, failure, { enableHighAccuracy: false, timeout: 5000, maximumAge: 60000 });
+        });
+      } catch (e) {
+        navigator.geolocation.getCurrentPosition(success, failure, { enableHighAccuracy: false, timeout: 5000, maximumAge: 60000 });
+      }
+    } else {
+      // No Permissions API — just prompt
+      navigator.geolocation.getCurrentPosition(success, failure, { enableHighAccuracy: false, timeout: 5000, maximumAge: 60000 });
+    }
   }, []);
 
   // If any error is set, ensure the global loader is hidden

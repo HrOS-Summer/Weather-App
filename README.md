@@ -106,8 +106,7 @@ Weather-App/
     App.jsx
     main.jsx
     index.css
-  public/
-  testsprite_tests/           # local testing artifacts (ignored in git where appropriate)
+  public/  
   vitest.config.ts
   vitest.setup.ts
   vite.config.js

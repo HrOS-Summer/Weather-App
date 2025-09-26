@@ -1,6 +1,5 @@
 import React from "react";
 import { getWeatherDesc, getWeatherIcon } from "../constants/weatherCode";
-import Loader from './Loader';
 
 // Helper to render value or NA for missing data
 const renderValue = (val, suffix) =>

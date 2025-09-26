@@ -175,7 +175,7 @@ const App = () => {
       // No Permissions API — just prompt
       navigator.geolocation.getCurrentPosition(success, failure, { enableHighAccuracy: false, timeout: 5000, maximumAge: 60000 });
     }
-  }, []);
+  }, [location]);
 
   // If any error is set, ensure the global loader is hidden
   useEffect(() => {
@@ -185,7 +185,7 @@ const App = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-400 to-blue-600 p-4">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-bold text-white text-center mb-8">Weather App</h1>
+        <h1 className="text-4xl font-bold text-white text-center mb-8">Weather Now</h1>
 
         <SearchBar city={city} setCity={setCity} onSearch={handleSearch} />
         <ErrorMessage error={error} />

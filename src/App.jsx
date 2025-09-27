@@ -17,6 +17,8 @@ const App = () => {
 
   const handleSearch = async () => {
     try {
+      // Reset State
+      // Clears previous results and, errors and shows loading spinner immediately
       setError(null);
       setLocation(null);
       setWeather(null);
@@ -26,8 +28,6 @@ const App = () => {
       if (data.results && data.results.length > 0) {
         const { latitude, longitude, name, country_code } = data.results[0];
         setLocation({ latitude, longitude, name, country_code });
-        //Debugging
-        console.log(data.results);
       } else {
         setError('City not found.');
         setIsLoading(false);

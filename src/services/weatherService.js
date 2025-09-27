@@ -1,16 +1,11 @@
 // services/weatherService.js
 import axios from "axios";
 
-/**
- * Weather Service
- * Contains all API calls related to weather and geocoding
- */
+// Weather Service
+// Contains all API calls related to weather and geocoding
 
-/**
- * Fetches geographical coordinates for a given city name
- * @param {string} cityName - Name of the city to search
- * @returns {Promise} - Returns location data with latitude and longitude
- */
+//Fetches geographical coordinates for a given city name
+
 export const fetchLocationByCity = async (cityName) => {
   const response = await axios.get(
     `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cityName)}`
@@ -18,12 +13,8 @@ export const fetchLocationByCity = async (cityName) => {
   return response.data;
 };
 
-/**
- * Reverse geocodes coordinates to a place name using Open-Meteo geocoding reverse endpoint
- * @param {number} latitude
- * @param {number} longitude
- * @returns {Promise} - Returns place data (results array) or empty object
- */
+// Reverse geocodes coordinates to a place name using Open-Meteo geocoding reverse endpoint
+
 export const fetchLocationByCoordinates = async (latitude, longitude) => {
   const response = await axios.get(
     `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${latitude}&longitude=${longitude}`
@@ -31,12 +22,8 @@ export const fetchLocationByCoordinates = async (latitude, longitude) => {
   return response.data;
 };
 
-/**
- * Fetches weather data for given coordinates
- * @param {number} latitude - Latitude coordinate
- * @param {number} longitude - Longitude coordinate
- * @returns {Promise} - Returns comprehensive weather data including current, hourly, and daily forecasts
- */
+// Fetches weather data for given coordinates
+
 export const fetchWeatherByCoordinates = async (latitude, longitude) => {
   const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,pressure_msl,windspeed_10m,precipitation,weathercode&hourly=temperature_2m,relative_humidity_2m,pressure_msl,windspeed_10m,precipitation,weathercode&daily=temperature_2m_max,temperature_2m_min,weathercode,precipitation_sum,windspeed_10m_max&forecast_days=7`;
 

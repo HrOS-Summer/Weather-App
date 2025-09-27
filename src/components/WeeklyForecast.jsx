@@ -1,4 +1,3 @@
-import React from 'react';
 import { getWeatherDesc, getWeatherIcon } from "../utils/weatherUtils";
 
 const WeeklyForecast = ({ weather }) => {
